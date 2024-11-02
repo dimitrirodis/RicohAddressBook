@@ -661,6 +661,9 @@ function Get-TagIdValue {
     The ID of the address book entry to modify. Find the ID from
     Get-AddressBookEntry. ID is **not** the Index.
 
+.Parameter RegistrationNumber
+    The RegistrationNumber displays in the copier UI and is a unique number between 1 and 50000 that determines the order of display of the address book items.
+
 .Parameter Name
     The new name for the address book entry.
 
@@ -720,8 +723,14 @@ function Get-TagIdValue {
 .Parameter UserCode
     The User Code property used for authentication management.
 
+.Parameter FolderScanType
+    The protocol used to communicate with the network path to save scanned files, smb or ftp.
+
 .Parameter FolderScanPath
     The network path used to save scanned files.
+
+.Parameter FolderScanPort
+    The port used for the network communication. ftp typically uses 21, smb typically uses 445.
 
 .Parameter FolderScanAccount
     The account to use to save the scanned files to a network location.
@@ -825,6 +834,11 @@ function Update-AddressBookEntry {
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
         $Id,
 
+        [uint32]
+        [ValidateRange(1, 50000)]
+        [Parameter(ValueFromPipelineByPropertyName)]
+        $RegistrationNumber,
+
         [string]
         [ValidateLength(1, 20)]
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -869,9 +883,19 @@ function Update-AddressBookEntry {
         $UserCode,
 
         [string]
+        [ValidateSet("smb", "ftp")]
+        [Parameter(ValueFromPipelineByPropertyName)]
+        $FolderScanType,
+
+        [string]
         [ValidateLength(1, 256)]
         [Parameter(ValueFromPipelineByPropertyName)]
         $FolderScanPath,
+
+        [int]
+        [ValidateRange(0, 65535)]
+        [Parameter(ValueFromPipelineByPropertyName)]
+        $FolderScanPort,
 
         [pscredential]
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -977,9 +1001,9 @@ function Update-AddressBookEntry {
 
             if (-not [string]::IsNullOrEmpty($FolderScanPath)) {
                 add 'remoteFolder:' 'true'
-                add 'remoteFolder:type' 'smb'
+                add 'remoteFolder:type' $FolderScanType
                 add 'remoteFolder:path' $FolderScanPath
-                add 'remoteFolder:port' 21
+                add 'remoteFolder:port' $FolderScanPort
             } elseif ($ForceFolderScanPath) {
                 add 'remoteFolder:' 'false'
             }
@@ -1057,6 +1081,9 @@ function Update-AddressBookEntry {
     will open a dialog box for the user to enter a password. See the help for
     Get-Credential for information on using this in a script non-interactively.
 
+.Parameter RegistrationNumber
+    The RegistrationNumber displays in the copier UI and is a unique number between 1 and 50000 that determines the order of display of the address book items.
+
 .Parameter Name
     The name for the address book entry.
 
@@ -1093,8 +1120,14 @@ function Update-AddressBookEntry {
 .Parameter UserCode
     The User Code property used for authentication management.
 
+.Parameter FolderScanType
+    The protocol used to communicate with the network path to save scanned files, smb or ftp.
+
 .Parameter FolderScanPath
     The network path used to save scanned files.
+
+.Parameter FolderScanPort
+    The port used for the network communication. ftp typically uses 21, smb typically uses 445.
 
 .Parameter FolderScanAccount
     The account to use to save the scanned files to a network location.
@@ -1183,6 +1216,11 @@ function Add-AddressBookEntry {
         [Parameter(Mandatory)]
         $Credential,
 
+        [uint32]
+        [ValidateRange(1, 50000)]
+        [Parameter(ValueFromPipelineByPropertyName)]
+        $RegistrationNumber,
+
         [string]
         [ValidateLength(1, 20)]
         [Parameter(Mandatory, ValueFromPipelineByPropertyName)]
@@ -1227,10 +1265,22 @@ function Add-AddressBookEntry {
         $UserCode,
 
         [string]
+        [ValidateSet("smb", "ftp")]
+        [Parameter(ParameterSetName = 'Folder', Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'FolderAndEmail', Mandatory, ValueFromPipelineByPropertyName)]
+        $FolderScanType,
+
+        [string]
         [ValidateLength(1, 256)]
         [Parameter(ParameterSetName = 'Folder', Mandatory, ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'FolderAndEmail', Mandatory, ValueFromPipelineByPropertyName)]
         $FolderScanPath,
+
+        [int]
+        [ValidateRange(0, 65535)]
+        [Parameter(ParameterSetName = 'Folder', Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'FolderAndEmail', Mandatory, ValueFromPipelineByPropertyName)]
+        $FolderScanPort,
 
         [pscredential]
         [Parameter(ParameterSetName = 'Folder', ValueFromPipelineByPropertyName)]
@@ -1306,6 +1356,7 @@ function Add-AddressBookEntry {
             }
 
             add 'entryType' 'user'
+            add 'index' $RegistrationNumber.ToString('00000')
             add 'name' $Name
             add 'longName' $KeyDisplay
             add 'displayedOrder' $DisplayPriority
@@ -1318,9 +1369,9 @@ function Add-AddressBookEntry {
 
             if (-not [string]::IsNullOrEmpty($FolderScanPath)) {
                 add 'remoteFolder:' 'true'
-                add 'remoteFolder:type' 'smb'
+                add 'remoteFolder:type' $FolderScanType
                 add 'remoteFolder:path' $FolderScanPath
-                add 'remoteFolder:port' 21
+                add 'remoteFolder:port' $FolderScanPort
 
                 if ($null -ne $FolderScanAccount) {
                     add 'remoteFolder:select' 'private'

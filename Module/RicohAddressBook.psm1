@@ -425,6 +425,7 @@ function Format-PropertyList {
         $output.FolderScanType = $properties['remoteFolder:type']
         $output.FolderScanPath = $properties['remoteFolder:path']
         $output.FolderScanPort = [uint32]$properties['remoteFolder:port']
+        $output.FolderScanServerName = $properties['remoteFolder:serverName']
 
         if ($properties.ContainsKey('remoteFolder:select') -and 'private' -eq $properties['remoteFolder:select']) {
             $output.FolderScanAccount = $properties['remoteFolder:accountName']
@@ -740,6 +741,9 @@ function Get-TagIdValue {
     will open a dialog box for the user to enter a password. See the help for
     Get-Credential for information on using this in a script non-interactively.
 
+.Parameter FolderScanServerName
+    The server IP or DNS name used to store scanned files.
+
 .Parameter EmailAddress
     The email address used to send scanned files.
 
@@ -896,6 +900,11 @@ function Update-AddressBookEntry {
         [ValidateRange(0, 65535)]
         [Parameter(ValueFromPipelineByPropertyName)]
         $FolderScanPort,
+
+        [string]
+        [ValidateLength(1, 253)]
+        [Parameter(ValueFromPipelineByPropertyName)]
+        $FolderScanServerName,
 
         [pscredential]
         [Parameter(ValueFromPipelineByPropertyName)]
@@ -1129,6 +1138,9 @@ function Update-AddressBookEntry {
 .Parameter FolderScanPort
     The port used for the network communication. ftp typically uses 21, smb typically uses 445.
 
+.Parameter FolderScanServerName
+    The server IP or DNS name used to store scanned files.
+
 .Parameter FolderScanAccount
     The account to use to save the scanned files to a network location.
 
@@ -1281,6 +1293,12 @@ function Add-AddressBookEntry {
         [Parameter(ParameterSetName = 'Folder', Mandatory, ValueFromPipelineByPropertyName)]
         [Parameter(ParameterSetName = 'FolderAndEmail', Mandatory, ValueFromPipelineByPropertyName)]
         $FolderScanPort,
+
+        [string]
+        [ValidateLength(1, 253)]
+        [Parameter(ParameterSetName = 'Folder', Mandatory, ValueFromPipelineByPropertyName)]
+        [Parameter(ParameterSetName = 'FolderAndEmail', Mandatory, ValueFromPipelineByPropertyName)]
+        $FolderScanServerName,
 
         [pscredential]
         [Parameter(ParameterSetName = 'Folder', ValueFromPipelineByPropertyName)]

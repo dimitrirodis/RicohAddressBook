@@ -902,7 +902,7 @@ function Update-AddressBookEntry {
         $FolderScanPort,
 
         [string]
-        [ValidateLength(1, 253)]
+        [ValidateLength(0, 253)]
         [Parameter(ValueFromPipelineByPropertyName)]
         $FolderScanServerName,
 

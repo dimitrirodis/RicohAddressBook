@@ -426,10 +426,15 @@ function Format-PropertyList {
         $output.FolderScanPath = $properties['remoteFolder:path']
         $output.FolderScanPort = [uint32]$properties['remoteFolder:port']
         $output.FolderScanServerName = $properties['remoteFolder:serverName']
-
-        if ($properties.ContainsKey('remoteFolder:select') -and 'private' -eq $properties['remoteFolder:select']) {
-            $output.FolderScanAccount = $properties['remoteFolder:accountName']
+	$output.FolderScanAccount = $properties['remoteFolder:accountName']
+	
+        if ($properties.ContainsKey('remoteFolder:select')) {
+	    $output.FolderSelect = $properties['remoteFolder:select']
         }
+
+        if ($properties.ContainsKey('remoteFolder:accountName')) {
+            $output.FolderScanAccount = $properties['remoteFolder:accountName']
+	}
     }
 
     if (Test-Property $properties 'mail:') {

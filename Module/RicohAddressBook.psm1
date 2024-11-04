@@ -1021,7 +1021,8 @@ function Update-AddressBookEntry {
                 add 'remoteFolder:' 'true'
                 add 'remoteFolder:type' $FolderScanType
                 add 'remoteFolder:path' $FolderScanPath
-                add 'remoteFolder:port' $FolderScanPort
+                add 'remoteFolder:port' $FolderScanPort.ToString()
+		add 'remoteFolder:serverName' $FolderScanServerName
             } elseif ($ForceFolderScanPath) {
                 add 'remoteFolder:' 'false'
             }

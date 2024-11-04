@@ -983,6 +983,10 @@ function Update-AddressBookEntry {
             function add($key, $value) {
                 Add-Property $content.propList $key $value
             }
+            
+            if($null -ne $RegistrationNumber) {
+                add 'index' $RegistrationNumber.ToString('00000')
+            }
 
             if (-not [string]::IsNullOrEmpty($Name)) {
                 add 'name' $Name

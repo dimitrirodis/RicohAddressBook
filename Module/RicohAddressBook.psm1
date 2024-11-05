@@ -989,7 +989,7 @@ function Update-AddressBookEntry {
                 Add-Property $content.propList $key $value
             }
             
-            if($null -ne $RegistrationNumber) {
+            if($null -ne $RegistrationNumber -and $RegistrationNumber -ne 0) {
                 add 'index' $RegistrationNumber.ToString('00000')
             }
 
